@@ -1,0 +1,21 @@
+{
+    "datasources": [
+        {
+        "name": "Thanos Query",
+        "type": "prometheus",
+        "access": "proxy",
+        "url": "http://localhost:10903",
+        "uid": "thanos-query",
+        "isDefault": true,
+        "jsonData": {
+            "httpMethod": "POST",
+            "queryTimeout": "60s",
+            "timeInterval": "15s",
+            "manageAlerts": true,
+            "alertmanagerUid": "alertmanager",
+            "incrementalQuerying": true,
+            "incrementalQueryOverlapWindow": "10m"
+        }
+        }
+    ]
+}

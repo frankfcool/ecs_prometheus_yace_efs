@@ -1,0 +1,58 @@
+groups:
+  - name: lambda_errors
+    interval: 30s
+    rules:
+      # Pre-compute error rates with different time windows
+      - record: aws_lambda:error_rate_5m
+        expr: rate(aws_lambda_errors_sum[5m])
+        labels:
+          aggregation: "5m"
+      
+      - record: aws_lambda:error_rate_1h
+        expr: rate(aws_lambda_errors_sum[1h])
+        labels:
+          aggregation: "1h"
+      
+      - record: aws_lambda:error_rate_1d
+        expr: rate(aws_lambda_errors_sum[1d])
+        labels:
+          aggregation: "1d"
+      
+      # Pre-compute error sums for different time windows
+      - record: aws_lambda:error_sum_1h
+        expr: increase(aws_lambda_errors_sum[1h])
+        labels:
+          aggregation: "1h"
+      
+      - record: aws_lambda:error_sum_1d
+        expr: increase(aws_lambda_errors_sum[1d])
+        labels:
+          aggregation: "1d"
+      
+      - record: aws_lambda:error_sum_7d
+        expr: increase(aws_lambda_errors_sum[7d])
+        labels:
+          aggregation: "7d"
+      
+      # Pre-compute total errors by function
+      - record: aws_lambda:total_errors_by_function
+        expr: sum(aws_lambda_errors_sum) by (function_name)
+        labels:
+          aggregation: "total"
+      
+      # Pre-compute error percentage
+      - record: aws_lambda:error_percentage_5m
+        expr: (rate(aws_lambda_errors_sum[5m]) / rate(aws_lambda_invocations_sum[5m])) * 100
+        labels:
+          aggregation: "percentage_5m"
+      
+      - record: aws_lambda:error_percentage_1h
+        expr: (rate(aws_lambda_errors_sum[1h]) / rate(aws_lambda_invocations_sum[1h])) * 100
+        labels:
+          aggregation: "percentage_1h"
+      
+      # Pre-compute top error functions
+      - record: aws_lambda:top_error_functions
+        expr: topk(10, sum(rate(aws_lambda_errors_sum[1h])) by (function_name))
+        labels:
+          aggregation: "top_10"
